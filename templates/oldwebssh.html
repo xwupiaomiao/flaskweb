@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSSH</title>
+    <!-- 引入xterm.js的CSS -->
+    <link rel="stylesheet" href="/static/css/xterm.css">
+    <!-- 导入jquery -->
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <!-- Socket.IO 客户端 -->
+    <script src="/static/js/socket.io.js"></script>
+    <!-- 引入xterm.js -->
+    <script src="/static/js/xterm.js"></script>
+    <style>
+        #terminal {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+<h2>WebSSH</h2>
+<div id="terminal"></div>
+
+<script>
+    $(document).ready(function () {
+        // const namespace = '/webssh/ws';
+        // const socket = io.connect("http://" + document.domain + ":" + location.port + namespace);
+        const socket = io('/oldwebssh/ws');
+        let term;  // 存储 Terminal 实例以便在整个作用域中使用
+        // 初始化 Terminal 实例
+        term = new Terminal();
+        term.open(document.getElementById('terminal'));
+
+        var sendcmd = '';
+        term.onData(data => {
+            // 发送消息至服务器
+            if (data.charCodeAt(0) === 13) { // 13是回车键的charCode
+                if (sendcmd.length > 0) {
+                    // 发送命令到服务器
+                    socket.emit('message', {data: sendcmd});
+                }
+            }// 在这里可以处理其他输入，例如输入命令等
+            else if (data === '\x08' || data === '\x7f') { // Backspace 字符
+                var inputLine = term.buffer.active.getLine(term.buffer.active.cursorY).translateToString().trim();
+                if (sendcmd.length > 0) {
+                    inputLine = inputLine.slice(0, -1); // 删除最后一个字符
+                    sendcmd = sendcmd.slice(0, -1);
+                    term.write('\b \b'); // 在终端中显示退格效果
+                }
+            } else if (data === '\x09') {
+                console.log(data);
+                sendcmd = sendcmd + '\t';
+                console.log(sendcmd);
+                socket.emit('message', {data: sendcmd});
+
+            } else {
+                sendcmd += data;
+                term.write(data); // 其他字符直接输入
+            }
+        });
+
+        // 从服务器接收输出
+        socket.on('command_response', function (msg) {
+            term.write(msg.data.replace(sendcmd, "")); // 输出服务器发送的数据
+            sendcmd = '';
+        });
+        term.write('连接成功! 输入命令并按回车发送。\r\n'); // 初始提示信息
+    });
+</script>
+</body>
+</html>

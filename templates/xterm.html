@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xterm.js Example</title>
+    <!-- 引入xterm.js -->
+    <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+    <!-- 引入xterm.js的CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css">
+</head>
+<body>
+    <div id="terminal" style="height: 400px; width: 600px;"></div>
+    <script>
+        // 创建终端实例
+        const term = new Terminal();
+        // 将终端附加到DOM元素
+        term.open(document.getElementById('terminal'));
+        // 你可以在这里写代码来与终端交互，例如：
+        term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ');
+    </script>
+</body>
+</html>

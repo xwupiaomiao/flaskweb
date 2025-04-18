@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 导入jQuery -->
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="/static/css/element.css"/>
+    <!-- 导入 Vue 3 -->
+    <script src="/static/js/vue.js"></script>
+    <!-- 导入组件库 -->
+    <script src="/static/js/element.js"></script>
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<div id="app">
+    <el-row>
+        <el-button>默认按钮</el-button>
+        <el-button type="primary">主要按钮</el-button>
+        <el-button type="success">成功按钮</el-button>
+        <el-button type="info">信息按钮</el-button>
+        <el-button type="warning">警告按钮</el-button>
+        <el-button type="danger">危险按钮</el-button>
+    </el-row>
+    <nav>
+        <p><a href="/sse" target="_blank">使用 SSE 协议推送消息</a></p>
+        <p><a href="/alertws" target="_blank">使用 WebSocket 协议推送消息</a></p>
+        <p><a href="/websocket" target="_blank">使用 WebSocket 发送和接收消息</a></p>
+        <p><a href="/chat/allws" target="_blank">给所有WebSocket客户端发送消息</a></p>
+        <p><a href="/chat/onews" target="_blank">WebSocket一对一聊天</a></p>
+        <p><a href="/webssh" target="_blank">WebSSH</a></p>
+    </nav>
+</div>
+
+<script>
+    const app = Vue.createApp({});
+    app.use(ElementPlus); // 确保使用 ElementPlus 插件
+    app.mount('#app'); // 挂载 Vue 实例
+</script>
+</body>
+</html>

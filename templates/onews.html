@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket 一对一示例</title>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>  -->
+    <script src="/static/js/socket.io.js"></script>
+    <!-- 导入jquery -->
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="/static/css/element.css"/>
+    <!-- 导入 Vue 3 -->
+    <script src="/static/js/vue.js"></script>
+    <!-- 导入组件库 -->
+    <script src="/static/js/element.js"></script>
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<h1>WebSocket 一对一聊天示例</h1>
+<input id="username" type="text" placeholder="输入用户名">
+<input id="recipient" type="text" placeholder="输入接收者用户名">
+<input id="message" type="text" placeholder="输入消息">
+<button onclick="sendMessage()">发送消息</button>
+<h2>收到的消息:</h2>
+<ul id="messages"></ul>
+
+<script>
+    const socket = io('/onews', {
+        query: {username: 'exampleUser'} // 建立连接时向后端传递用户名
+    });
+
+    // 用户连接后加入房间
+    document.getElementById('username').addEventListener('change', function () {
+        const username = this.value;
+        socket.emit('join', {username: username, room: username});
+    });
+
+    // 监听消息事件
+    socket.on('receive_message', function (data) {
+        const li = document.createElement('li');
+        const username = document.getElementById('username').value;
+        const recusername = data.message.user;
+        if (username !== recusername) {
+            li.textContent = data.message.user + '：' + data.message.msg;
+
+            document.getElementById('messages').appendChild(li);
+        }
+    });
+
+    // 发送消息的函数
+    function sendMessage() {
+        const recipient = document.getElementById('recipient').value;
+        const msg = document.getElementById('message').value;
+        const username = document.getElementById('username').value;
+
+        // 将消息发送给接收者
+        socket.emit('send_message', {recipient_id: recipient, message: msg, sendusername: username});
+        document.getElementById('message').value = '';
+        const li = document.createElement('li');
+        li.textContent = username + '：' + msg;
+        document.getElementById('messages').appendChild(li);
+    }
+
+    // 假设用户点击一个离开按钮来离开房间
+    function leaveRoom() {
+        const username = document.getElementById('username').value; // 获取用户名
+        const room = document.getElementById('username').value;  // 假设用户要离开的房间
+
+        // 发送离开房间的事件
+        socket.emit('leave', {username: username, room: room});
+    }
+
+    // 示例：用户在某个地方(例如按钮)点击以离开房间
+    const leaveButton = document.createElement('button');
+    leaveButton.innerHTML = 'Leave Room';
+    leaveButton.onclick = leaveRoom;
+    document.body.appendChild(leaveButton);
+</script>
+</body>
+</html>

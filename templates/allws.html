@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script> -->
+    <script src="/static/js/socket.io.js"></script>
+    <!-- 导入jquery -->
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="/static/css/element.css"/>
+    <!-- 导入 Vue 3 -->
+    <script src="/static/js/vue.js"></script>
+    <!-- 导入组件库 -->
+    <script src="/static/js/element.js"></script>
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<h1>WebSocket 示例</h1>
+<input id="message" type="text" placeholder="输入消息">
+<button onclick="sendMessage()">发送消息</button>
+<ul id="messages"></ul>
+<script>
+    var socket = io('/allws');
+
+    socket.on('message', function (msg) {
+        const li = document.createElement('li');
+        li.textContent = msg;
+        document.getElementById('messages').appendChild(li);
+    });
+
+    function sendMessage() {
+        const msg = document.getElementById('message').value;
+        socket.send(msg);
+        document.getElementById('message').value = '';
+        const li = document.createElement('li');
+        li.textContent = msg;
+        document.getElementById('messages').appendChild(li);
+    }
+</script>
+</body>
+</html>

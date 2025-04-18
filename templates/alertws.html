@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 导入jquery -->
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="/static/css/element.css"/>
+    <!-- 导入 Vue 3 -->
+    <script src="/static/js/vue.js"></script>
+    <!-- 导入组件库 -->
+    <script src="/static/js/element.js"></script>
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon">
+    <title>告警</title>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script> -->
+    <script src="/static/js/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #messages {
+            margin: 20px 0;
+        }
+
+        .message {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<h2>告警详情</h2>
+<div id="messages"></div>
+</body>
+<script type="text/javascript">
+    // var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // var socket = io.connect('http://{{serverip}}:5000/alertws/ws');
+    var socket = io('/alertws/ws');
+    socket.on('data_received', function (msg) {
+        console.log('Received:', msg.data);
+        var messagesDiv = document.getElementById('messages');
+        var newMessage = document.createElement('div');
+        newMessage.className = 'message';
+        Object.keys(msg.data).forEach((key, index) => {
+            console.log('Key: ' + key + ', Value: ' + msg.data[key]);
+            // 如果是第一个键，不加 <br>，否则加
+            if (index !== 0) {
+                newMessage.innerHTML += '<br>';
+            }
+            newMessage.innerHTML += key + '：' + msg.data[key];  // 显示接收到的消息
+        });
+        // newMessage.innerHTML = '告警主机：' + msg.data.username + '<br />'
+        //     + '告警详情：' + msg.data.password;  // 显示接收到的消息
+        messagesDiv.appendChild(newMessage);  // 将消息添加到页面
+    });
+</script>
+</html>

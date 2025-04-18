@@ -1,0 +1,28 @@
+# 先把镜像pull到本地
+# docker pull faucet/python3
+# 使用本地镜像作为基础镜像
+FROM faucet/python3:latest
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装所需的Python包（使用阿里云镜像加速）
+RUN pip install --no-cache-dir \
+    Flask \
+    gevent \
+    gevent-websocket \
+    Flask-SocketIO \
+    requests \
+    -i https://mirrors.aliyun.com/pypi/simple/
+
+# 暴露Flask默认端口（按需修改）
+EXPOSE 5000
+
+# 建议在运行时挂载代码，或在此处添加代码复制
+COPY  flaskwebsocket /app/flaskwebsocket
+
+# 设置默认启动命令（根据实际情况修改）
+CMD ["python", "./flaskwebsocket/flaskrun.py"]
+
+# 构建镜像
+# docker build -t flask:1.0 -f DockerFile .

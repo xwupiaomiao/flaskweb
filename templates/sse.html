@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 导入jquery -->
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="/static/css/element.css"/>
+    <!-- 导入 Vue 3 -->
+    <script src="/static/js/vue.js"></script>
+    <!-- 导入组件库 -->
+    <script src="/static/js/element.js"></script>
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon">
+    <title>SSE Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #events {
+            margin: 20px 0;
+        }
+
+        .events {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #oneevents {
+            margin: 20px 0;
+        }
+
+        .oneevents {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<h2>One SSE Example</h2>
+<div id="oneevents"></div>
+<h2>all SSE Example</h2>
+<div id="events"></div>
+</body>
+<script>
+    // 创建一个 EventSource 对象，连接到 /stream 路由
+    const eventSource = new EventSource('/sse/allstream');
+
+    // 监听消息事件
+    eventSource.onmessage = function (event) {
+        // 将接收到的数据添加到页面上
+        const eventData = document.createElement('div');
+        // eventData.textContent = event.data;
+        eventData.className = 'events';
+        // 使用 JSON.parse() 将 JSON 字符串转换为对象
+        Object.keys(JSON.parse(event.data)).forEach((key, index) => {
+            console.log('Key: ' + key + ', Value: ' + JSON.parse(event.data)[key]);
+            // 如果是第一个键，不加 <br>，否则加
+            if (index !== 0) {
+                eventData.innerHTML += '<br>';
+            }
+            eventData.innerHTML += key + '：' + JSON.parse(event.data)[key];  // 显示接收到的消息
+        });
+        document.getElementById('events').appendChild(eventData);
+    };
+
+    // 处理错误事件
+    eventSource.onerror = function (event) {
+        console.error('EventSource failed:', event);
+    };
+
+    // 创建一个 oneeventSource 对象，连接到 /sse/onestream 路由
+    const oneeventSource = new EventSource('/sse/onestream');
+
+    // 监听消息事件
+    oneeventSource.onmessage = function (event) {
+        // 将接收到的数据添加到页面上
+        const eventData = document.createElement('div');
+        // eventData.textContent = event.data;
+        eventData.className = 'oneevents';
+        // 使用 JSON.parse() 将 JSON 字符串转换为对象
+        Object.keys(JSON.parse(event.data)).forEach((key, index) => {
+            console.log('Key: ' + key + ', Value: ' + JSON.parse(event.data)[key]);
+            // 如果是第一个键，不加 <br>，否则加
+            if (index !== 0) {
+                eventData.innerHTML += '<br>';
+            }
+            eventData.innerHTML += key + '：' + JSON.parse(event.data)[key];  // 显示接收到的消息
+        });
+        document.getElementById('oneevents').appendChild(eventData);
+    };
+
+    // 处理错误事件
+    oneeventSource.onerror = function (event) {
+        console.error('EventSource failed:', event);
+    };
+</script>
+</html>
