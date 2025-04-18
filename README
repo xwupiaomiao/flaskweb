@@ -4,3 +4,4 @@
 基于websocket协议，实现一对一聊天，以及给所有websocket连接发送广播
 1、启动flaskws.py服务端文件
 2、运行client.py客户端文件
+3、启动该项目或运行views/models.py文件初始化数据库
